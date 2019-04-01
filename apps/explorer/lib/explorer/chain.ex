@@ -2,6 +2,7 @@ defmodule Explorer.Chain do
   @moduledoc """
   The chain context.
   """
+  use Timex
 
   import Ecto.Query,
     only: [
@@ -398,6 +399,14 @@ defmodule Explorer.Chain do
       )
 
     Repo.aggregate(query, :count, :hash)
+  end
+
+  @spec transaction_count_on_day(Date.t()) :: non_neg_integer()
+  def transaction_count_on_day(day) do
+    Transaction
+    |> join(:inner, [t], b in assoc(t, :block))
+    |> where([_, b], fragment("DATE_PART('day', ? - ?)::integer = 0", b.timestamp, type(^day, :utc_datetime)))
+    |> Repo.aggregate(:count, :hash)
   end
 
   @doc """
