@@ -421,6 +421,18 @@ defmodule Explorer.Chain do
     Repo.aggregate(query, :count, :hash)
   end
 
+  @doc """
+  Counts the number of `t:Explorer.Chain.Transaction.t/0` during a specific `day`.
+  """
+  @spec transaction_count_on_day(Date.t()) :: non_neg_integer()
+  def transaction_count_on_day(day) do
+    Transaction
+    |> join(:inner, [t], b in assoc(t, :block))
+    |> where([_, b], fragment("DATE_PART('day', ? - ?)::integer = 0", b.timestamp, type(^day, :utc_datetime)))
+    |> select(fragment("COUNT(*)"))
+    |> Repo.one()
+  end
+
   @spec address_to_incoming_transaction_count(Address.t()) :: non_neg_integer()
   def address_to_incoming_transaction_count(%Address{hash: address_hash}) do
     paging_options = %PagingOptions{page_size: @max_incoming_transactions_count}
