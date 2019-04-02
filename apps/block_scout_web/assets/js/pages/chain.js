@@ -8,6 +8,7 @@ import { createStore, connectElements } from '../lib/redux_helpers.js'
 import { batchChannel } from '../lib/utils'
 import listMorph from '../lib/list_morph'
 import { createMarketHistoryChart } from '../lib/market_history_chart'
+import { createTransactionHistoryChart } from '../lib/transction_history_chart'
 
 const BATCH_THRESHOLD = 6
 
@@ -16,6 +17,7 @@ export const initialState = {
   availableSupply: null,
   averageBlockTime: null,
   marketHistoryData: null,
+  tpdData: null,
   blocks: [],
   blocksLoading: true,
   blocksError: false,
@@ -71,6 +73,11 @@ function baseReducer (state = initialState, action) {
         availableSupply: action.msg.exchangeRate.availableSupply,
         marketHistoryData: action.msg.marketHistoryData,
         usdMarketCap: action.msg.exchangeRate.marketCapUsd
+      })
+    }
+    case 'RECEIVED_NEW_TRANSACTION_COUNT_HISTORY': {
+      return Object.assign({}, state, {
+        tpdData: action.msg.tpdData
       })
     }
     case 'RECEIVED_NEW_TRANSACTION_BATCH': {
@@ -141,6 +148,15 @@ const elements = {
     render ($el, state, oldState) {
       if (!chart || (oldState.availableSupply === state.availableSupply && oldState.marketHistoryData === state.marketHistoryData)) return
       chart.update(state.availableSupply, state.marketHistoryData)
+    }
+  },
+  '[data-chart="transactionHistoryChart"]': {
+    load ($el) {
+      chart = createTransactionHistoryChart($el[0])
+    },
+    render ($el, state, oldState) {
+      if (!chart || (oldState.tpdData === state.tpdData)) return
+      chart.update(state.tpdData)
     }
   },
   '[data-selector="transaction-count"]': {
