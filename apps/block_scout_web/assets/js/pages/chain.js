@@ -8,7 +8,7 @@ import { createStore, connectElements } from '../lib/redux_helpers.js'
 import { batchChannel } from '../lib/utils'
 import listMorph from '../lib/list_morph'
 import { createMarketHistoryChart } from '../lib/market_history_chart'
-import { createTransactionHistoryChart } from '../lib/transction_history_chart'
+import { createTransactionHistoryChart } from '../lib/transaction_history_chart'
 
 const BATCH_THRESHOLD = 6
 

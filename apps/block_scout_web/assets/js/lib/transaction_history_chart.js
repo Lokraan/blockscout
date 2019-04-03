@@ -121,7 +121,7 @@ class TransactionHistoryChart {
 }
 
 export function createTransactionHistoryChart (el) {
-  const dataPath = el.dataset.transaction_history_chart_path
+  const dataPath = el.dataset.history_chart_path
   const $chartLoading = $('[data-chart-loading-message]')
   const $chartError = $('[data-chart-error-message]')
   const chart = new TransactionHistoryChart(el, 0, [])
