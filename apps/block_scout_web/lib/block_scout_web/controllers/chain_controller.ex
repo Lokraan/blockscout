@@ -20,7 +20,8 @@ defmodule BlockScoutWeb.ChainController do
       address_count: Chain.count_addresses_with_balance_from_cache(),
       average_block_time: AverageBlockTime.average_block_time(),
       exchange_rate: exchange_rate,
-      chart_data_path: market_history_chart_path(conn, :show),
+      history_chart_type: history_chart_type(),
+      chart_data_path: chart_path().(conn, :show),
       transaction_estimated_count: transaction_estimated_count,
       transactions_path: recent_transactions_path(conn, :index)
     )
@@ -81,5 +82,34 @@ defmodule BlockScoutWeb.ChainController do
           item
         )
     )
+  end
+
+  defp chart_path do
+    case chart_type() do
+      :market_history ->
+        &market_history_chart_path/2
+
+      :transaction_history ->
+        &transaction_history_chart_path/2
+    end
+  end
+
+  defp history_chart_type do
+    case chart_type() do
+      :market_history ->
+        "marketHistoryChart"
+
+      :transaction_history ->
+        "transactionHistoryChart"
+    end
+  end
+
+  defp chart_type do
+    config(:chart_type) || :market_history
+  end
+
+  @spec config(atom()) :: term
+  defp config(key) do
+    Application.get_env(:explorer, __MODULE__, [])[key]
   end
 end

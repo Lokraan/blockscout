@@ -73,6 +73,8 @@ config :block_scout_web,
 
 config :block_scout_web, BlockScoutWeb.Counters.BlocksIndexedCounter, enabled: true
 
+config :block_scout_web, BlockScoutWeb.ChainController, chart_type: :market_history
+
 # Configures the endpoint
 config :block_scout_web, BlockScoutWeb.Endpoint,
   instrumenters: [BlockScoutWeb.Prometheus.Instrumenter, SpandexPhoenix.Instrumenter],
